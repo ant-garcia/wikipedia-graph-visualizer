@@ -1,0 +1,9 @@
+@(message: String)
+
+@main("Wikpedia Graph Visualizer"){
+	<form method="get" action="@routes.CrawlerController.initCrawl()">
+		<p>Enter a word to be queried</p>
+		Seed: <input type="text" size=20 name="seed" value="https://en.wikipedia.org/wiki/"/><br>
+		<input type="submit" value="Start!"/>
+	</form>
+}
