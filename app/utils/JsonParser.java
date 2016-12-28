@@ -14,7 +14,7 @@ import org.json.simple.parser.JSONParser;
 
 public class JsonParser{
 
-	public JSONObject initNode(Vertex v){
+	private JSONObject initNode(Vertex v){
 		JSONObject obj = new JSONObject();
 
 		obj.put("id", v.getId());
@@ -27,7 +27,7 @@ public class JsonParser{
 		return obj;
 	}
 
-	public JSONObject initLink(Edge e){
+	private JSONObject initLink(Edge e){
 		JSONObject obj = new JSONObject();
 
 		obj.put("id", e.hashCode());
@@ -37,10 +37,10 @@ public class JsonParser{
 		return obj;
 	}
 
-	public void createJsonFile(Graph g){
-		JSONObject graph = new JSONObject();
+	public String createJsonFile(Graph g){
 		JSONArray nodes = new JSONArray();
 		JSONArray links = new JSONArray();
+		JSONObject graph = new JSONObject();
 
 		for(Vertex v : g.getVertices())
 			nodes.add(initNode(v));
@@ -51,15 +51,6 @@ public class JsonParser{
 		graph.put("nodes", nodes);
 		graph.put("edges", links);
 
-		try{
-			FileWriter fw = new FileWriter("public/assets/json/graph.json");
-			
-			fw.write(graph.toJSONString());
-			fw.flush();
-			fw.close();	
-		}
-		catch(IOException ioe){
-			ioe.printStackTrace();
-		}
+		return graph.toJSONString();
 	}
 }
