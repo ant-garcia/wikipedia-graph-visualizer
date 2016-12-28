@@ -17,6 +17,8 @@ import play.data.FormFactory;
 public class CrawlerController extends Controller{
 	@Inject
     FormFactory formFactory;
+
+	private String jsonApi;
 	private static String seed;
 
 	public Result initCrawl(){
@@ -30,12 +32,12 @@ public class CrawlerController extends Controller{
 		Graph graph = initGraph(crawler.getPages().toArray(new Page[0]));
 		System.out.println("PAGES: " + crawler.getPages().size() + " IN: " + duration + "ms");
 
-		parser.createJsonFile(graph);
+		jsonApi = parser.createJsonFile(graph);
 		return redirect(routes.Application.graph());
 
 	}
 
-	public Graph initGraph(Page[] pages){
+	private Graph initGraph(Page[] pages){
 		Graph g = new Graph();
 		for(Page p : pages){
 			Vertex v = new Vertex(p);
@@ -56,5 +58,9 @@ public class CrawlerController extends Controller{
 		}
 
 		return g;
+	}
+
+	public Result api(){
+		return ok(jsonApi);
 	}
 }
