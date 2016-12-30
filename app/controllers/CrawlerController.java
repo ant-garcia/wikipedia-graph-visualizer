@@ -2,10 +2,7 @@ package controllers;
 
 import javax.inject.Inject;
 
-import models.Page;
-import models.Edge;
 import models.Graph;
-import models.Vertex;
 
 import utils.Crawler;
 import utils.JsonParser;
@@ -16,51 +13,37 @@ import play.data.FormFactory;
 
 public class CrawlerController extends Controller{
 	@Inject
-    FormFactory formFactory;
+    FormFactory mFormFactory;
 
-	private String jsonApi;
-	private static String seed;
+	private String mSeed;
+	private String mJsonApi;
+	private String mBenchmark;
 
-	public Result initCrawl(){
-		seed = formFactory.form().bindFromRequest().get("seed");
+	public Result initSeed(){
 		Crawler crawler = new Crawler();
 		JsonParser parser = new JsonParser();
-		long startTime = System.nanoTime();
-		crawler.search(seed);
-		long endTime = System.nanoTime();
-		long duration = (endTime - startTime) / 1000000;
-		Graph graph = initGraph(crawler.getPages().toArray(new Page[0]));
-		System.out.println("PAGES: " + crawler.getPages().size() + " IN: " + duration + "ms");
+		mSeed = mFormFactory.form().bindFromRequest().get("seed");
 
-		jsonApi = parser.createJsonFile(graph);
-		return redirect(routes.Application.graph());
+		crawler.search(mSeed);
 
+		Graph graph = new Graph(crawler.toPageArray());
+		mBenchmark = String.format("Initial seed: %s<br>%s<br>%s<br>", mSeed, crawler.getBenchmark(), graph.getBenchmark());
+		mJsonApi = parser.createJsonFile(graph);
+
+		return redirect(routes.Application.index());
 	}
 
-	private Graph initGraph(Page[] pages){
-		Graph g = new Graph();
-		for(Page p : pages){
-			Vertex v = new Vertex(p);
-			if(!g.addVertex(v))
-				System.out.println("FAILED: \n" + v.getPage().toString());				
-		}
+	public Result benchmark(){
+		if(mBenchmark == null)
+			return notFound("");
 
-		for(Vertex v : g.getVertices()){
-			Vertex parent = g.getVertex(v.getId(), v.getPage().getParent());
-			if(parent != null && !v.getPage().isRoot()){
-				g.addEdge(parent, v);
-				Vertex dup = g.getVertex(v.getId(), v.getLabel());
-				if(dup != null && v.getId() < dup.getId()){
-					g.addEdge(g.getVertex(dup.getId(), dup.getPage().getParent()), v);
-					g.removeVertex(dup.getId());
-				}	
-			}
-		}
-
-		return g;
+		return ok(mBenchmark);
 	}
 
 	public Result api(){
-		return ok(jsonApi);
+		if(mJsonApi == null)
+			return notFound("");
+
+		return ok(mJsonApi);
 	}
 }

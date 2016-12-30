@@ -1,9 +1,65 @@
-@(message: String)
+@()
 
-@main("Wikpedia Graph Visualizer"){
-	<form method="get" action="@routes.CrawlerController.initCrawl()">
-		<p>Enter a word to be queried</p>
-		Seed: <input type="text" size=20 name="seed" value="https://en.wikipedia.org/wiki/"/><br>
-		<input type="submit" value="Start!"/>
-	</form>
-}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset=utf-8 />
+		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+		<link type='Text/css' rel='stylesheet' href='@routes.Assets.versioned("stylesheets/stylesheet.css")'/>
+		<link type='Text/css' rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'>
+		<script type='Text/javascript' src='@routes.Assets.at("sigma.min.js")'></script>
+		<script type='Text/javascript' src='@routes.Assets.at("sigma.layout.forceAtlas2.min.js")'></script>
+		<script type='Text/javascript' src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
+		<script type='Text/javascript' src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'></script>
+		<title>Wikipedia Graph Visualizer</title>
+	</head>
+	<body>
+		<div class='modal in' id='seedModal' role='dialog' data-keyboard='false' data-backdrop='static'>
+			<div class='vertical-alignment-helper'>
+	        	<div class='modal-dialog vertical-align-center'>
+			  		<div class='modal-dialog '>
+			  			<div class='modal-content'>
+							<div class='modal-header'>
+								<h1 class='modal-title'>Wikipedia Graph Visualizer</h1>
+							</div>
+							<form class='form-horizontal' method='get' action='@routes.CrawlerController.initSeed()'>
+								<div class='form-group'>
+									<label class='control-label col-sm-2' for='seed'>Seed:</label>
+									<div class='col-sm-8'>          
+										<input type='text' class='form-control' name='seed' value='https://en.wikipedia.org/wiki/'/>
+									</div>
+								</div>
+								<div class='form-group'>        
+									<div class='col-sm-offset-5 col-sm-10'>
+										<button type='submit' class='btn btn-primary'>Submit</button>
+									</div>
+								</div>
+							</form>
+						</div>
+			  		</div>
+		  		</div>
+	  		</div>
+		</div>
+		<div class='modal fade' id='benchmarkModal' role='dialog' data-keyboard='false' data-backdrop='static'>
+			<div class='vertical-alignment-helper'>
+	        	<div class='modal-dialog vertical-align-center'>
+			  		<div class='modal-dialog '>
+			  			<div class='modal-content'>
+							<div class='modal-header'>
+								<h1 class='modal-title'>Benchmark</h1>
+							</div>
+							<div class='modal-body'>
+								<p></p> 
+							</div>
+							<div class='modal-footer'>
+								<button id='showGraph' type='submit' class='btn btn-primary' data-dismiss='modal'>Display Graph</button>
+							</div>
+						</div>
+			  		</div>
+		  		</div>
+	  		</div>
+		</div>
+		<div id='container'> </div>
+		<script type='Text/javascript' src='@routes.Assets.at("app.js")'></script>
+	</body>
+</html>

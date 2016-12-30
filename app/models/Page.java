@@ -8,46 +8,46 @@ public class Page{
 	private String mParentUrl;
 
 	public Page(String parent, String name){
-		this.mUrl = name;
-		this.mParentUrl = parent;
-		this.mName = formatUrl(name);
-		this.mParent = formatUrl(parent);
+		mUrl = name;
+		mParentUrl = parent;
+		mName = formatUrl(name);
+		mParent = formatUrl(parent);
 	}
 	
 	public void setId(int id){
-		this.mId = id;
+		mId = id;
 	}
 
 	public int getId(){
-		return this.mId;
+		return mId;
 	}
 
 	public String getParentUrl(){
-		return this.mParentUrl;
+		return mParentUrl;
 	}
 
 	public String getUrl(){
-		return this.mUrl;
+		return mUrl;
 	}
 
 	public boolean isRoot(){
-		return this.mParentUrl.equals(this.mUrl);
+		return mParentUrl.equals(mUrl);
 	}
 
 	public String getName(){
-		return this.mName;
+		return mName;
 	}
 
 	public String getParent(){
-		return this.mParent;
+		return mParent;
 	}
 
 	public String toString(){
-		return "ID: " + this.mId + "\nPARENT: " + this.mParentUrl + "\nCURRENT: " + this.mUrl + "\n";
+		return "ID: " + mId + "\nPARENT: " + mParentUrl + "\nCURRENT: " + mUrl + "\n";
 	}
 
 	public int hashCode(){
-		return this.mUrl.hashCode();
+		return mUrl.hashCode();
 	}
 
 	public boolean equals(Object obj){
@@ -55,7 +55,7 @@ public class Page{
 			return false;
 
 		Page p = (Page) obj;
-		return this.mUrl.equals(p.mUrl) && this.mParentUrl.equals(p.mParentUrl);
+		return mUrl.equals(p.mUrl) && mParentUrl.equals(p.mParentUrl);
 	}
 
 	private String formatUrl(String url){

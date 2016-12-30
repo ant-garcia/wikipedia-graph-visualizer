@@ -6,12 +6,15 @@ import java.util.HashSet;
 import java.util.HashMap;
 
 public class Graph{
+	private long mBuildTime;
 	private HashMap<Integer, Edge> mEdges;
 	private HashMap<Integer, Vertex> mVertices;
 
-	public Graph(){
-		this.mEdges = new HashMap<Integer, Edge>();
-		this.mVertices = new HashMap<Integer, Vertex>();
+	public Graph(Page[] pages){
+		mEdges = new HashMap<Integer, Edge>();
+		mVertices = new HashMap<Integer, Vertex>();
+
+		initGraph(pages);
 	}
 
 	public boolean addEdge(Vertex v1, Vertex v2){
@@ -54,33 +57,33 @@ public class Graph{
 		if(e.getFrom() == null || e.getTo() == null)
 			return false;
 
-		return this.mEdges.containsKey(e.hashCode());
+		return mEdges.containsKey(e.hashCode());
 	}
 
 	public Edge removeEdge(Edge e){
 		e.getFrom().removeEdge(e);
 		e.getTo().removeEdge(e);
 
-		return this.mEdges.remove(e.hashCode());
+		return mEdges.remove(e.hashCode());
 	}
 
 	public boolean containsVertex(Vertex v){
-		return this.mVertices.get(v.getId()) != null;
+		return mVertices.get(v.getId()) != null;
 	}
 
 	public Vertex getVertex(int id){
 		return mVertices.get(id);
 	}
 
-	public Vertex getVertex(int id, String label){
-		return this.mVertices.values().stream()
+	public Vertex getVertex(int id, String label){ //find identical Vertices
+		return mVertices.values().stream()
 			.filter(x -> label.equals(x.getLabel()) && x.getId() != id)
 			.findAny()
 			.orElse(null);
 	}
 
 	public boolean addVertex(Vertex v){
-		Vertex current = this.mVertices.get(v.getId());
+		Vertex current = mVertices.get(v.getId());
 		if(current != null)
 			return false;
 
@@ -92,26 +95,56 @@ public class Graph{
 		Vertex v = mVertices.remove(id);
 
 		while(v.getEdgeCount() > 0)
-			this.removeEdge(v.getEdge(0));
+			removeEdge(v.getEdge(0));
 
 		return v;
 	}
 
 	public Set<Vertex> getVertices(){
-		return new HashSet<Vertex>(this.mVertices.values());
+		return new HashSet<Vertex>(mVertices.values());
 	}
 
 	public Set<Edge> getEdges(){
-		return new HashSet<Edge>(this.mEdges.values());
+		return new HashSet<Edge>(mEdges.values());
+	}
+
+	public String toString(){
+		return "Vertices: " + mVertices.size() + "\nEdges: " + mEdges.size();
+	}
+
+	public String getBenchmark(){
+		return String.format("Graph created in %s ms:\n%s", mBuildTime, toString());
+	}
+
+	private void initGraph(Page[] pages){
+		long startTime = System.nanoTime();
+
+		for(Page p : pages)
+			addVertex(new Vertex(p));
+
+		for(Vertex v : getVertices()){
+			Vertex parent = getVertex(v.getId(), v.getPage().getParent());
+			if(parent != null && !v.getPage().isRoot()){
+				addEdge(parent, v);
+				Vertex dup = getVertex(v.getId(), v.getLabel());
+				if(dup != null && v.getId() < dup.getId()){
+					addEdge(getVertex(dup.getId(), dup.getPage().getParent()), v);
+					removeVertex(dup.getId());
+				}	
+			}
+		}
+		
+		mBuildTime = (System.nanoTime() - startTime) / 1000000;
 	}
 
 	public void dfs(int id){
-		Vertex v;
 		Stack<Integer> s = new Stack<Integer>();
 		HashMap<Integer, Vertex> tmp = new HashMap<>();
-		tmp.putAll(this.mVertices);
+
+		tmp.putAll(mVertices);
 		s.push(id);
 		System.out.print(id);
+
 		while(!s.isEmpty()){
 			int i = s.pop();
 			if(!tmp.get(i).getChecked()){
@@ -121,12 +154,13 @@ public class Graph{
 				System.out.print(id != i ? " -> " + i : "");
 			}
 		}
+
 		System.out.println("");
 		clearFlags();
 	}
 
 	public void clearFlags(){
-		for(Vertex v : this.mVertices.values())
+		for(Vertex v : mVertices.values())
 			mVertices.get(v.getId()).setChecked(false);
 	}	
 }

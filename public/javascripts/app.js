@@ -12,13 +12,22 @@ function init(){
 		},
 		settings: {
 			nodesPowRatio: 1,
-			edgeColor: "target",
+			edgeColor: 'target',
 			labelThreshold: 20,
 			hideEdgesOnMove: true,
 		}
 	});
 
-    loadJson();
+    load();
+}
+
+function load(){
+	$.get('/benchmark', function(data){
+		$('#seedModal').modal().modal('hide');
+		$('#benchmarkModal').modal().find('p').append(data).modal('show');
+		$('.modal-backdrop.in').modal().modal('hide');
+		loadJson();
+	});
 }
 
 function loadJson(){
@@ -28,13 +37,11 @@ function loadJson(){
 }
 
 function drawGraph(graph){
-	
-	for(var i = 0; i < graph.nodes.length; i++) {
+	for(var i = 0; i < graph.nodes.length; i++){
 		s.graph.addNode(graph.nodes[i]);
 	}
 	
-	for(var i = 0; i < graph.edges.length; i++) {
-		//graph.edges[i].color = 'rgba(204, 204, 204, 0.2)'; 
+	for(var i = 0; i < graph.edges.length; i++){ 
 		s.graph.addEdge(graph.edges[i]);
 	}
 	
@@ -49,6 +56,10 @@ function drawGraph(graph){
 	fa.bind('start stop', function(e){
 		console.log(e.type);
 	});
-	s.refresh();
-	s.startForceAtlas2();
+
+	$('#showGraph').on('click', function (e){
+		$('#benchmarkModal').modal('hide');
+		s.refresh();
+		s.startForceAtlas2();
+	});
 }

@@ -11,63 +11,63 @@ public class Vertex{
 	private ArrayList<Edge> mNeighbors;
 
 	public Vertex(Page p){
-		this.mPage = p;
-		this.mId = p.getId();
-		this.mLabel = p.getName();
-		this.mNeighbors = new ArrayList<Edge>();
+		mPage = p;
+		mId = p.getId();
+		mLabel = p.getName();
+		mNeighbors = new ArrayList<Edge>();
 	}
 
 	public void addEdge(Edge e){
-		if(!this.mNeighbors.contains(e))
-			this.mNeighbors.add(e);
+		if(!mNeighbors.contains(e))
+			mNeighbors.add(e);
 	}
 
 	public boolean containsEdge(Edge e){
-		return this.mNeighbors.contains(e);
+		return mNeighbors.contains(e);
 	}
 
 	public Edge getEdge(int index){
-		return this.mNeighbors.get(index);
+		return mNeighbors.get(index);
 	}
 
 	public Edge removeEdge(int index){
-		return this.mNeighbors.remove(index);
+		return mNeighbors.remove(index);
 	}
 
 	public void removeEdge(Edge e){
-		this.mNeighbors.remove(e);
+		mNeighbors.remove(e);
 	}
 
 	public int getEdgeCount(){
-		return this.mNeighbors.size();
+		return mNeighbors.size();
 	}
 
 	public String getLabel(){
-		return this.mLabel;
+		return mLabel;
 	}
 
 	public Page getPage(){
-		return this.mPage;
+		return mPage;
 	}
 
 	public int getId(){
-		return this.mId;
+		return mId;
 	}
 
 	public void setChecked(boolean check){
-		this.isChecked = check;
+		isChecked = check;
 	}
 
 	public boolean getChecked(){
-		return this.isChecked;
+		return isChecked;
 	}
 
 	public String toString(){
-		return "VERTEX: " + this.mId + " " + this.mLabel + " NEIGHBORS: " + Arrays.toString(getNeighbors().toArray()) + "\n";
+		return "VERTEX: " + mId + " " + mLabel + " NEIGHBORS: " + Arrays.toString(getNeighbors().toArray()) + "\n";
 	}
 
 	public int hashCode(){
-		return this.mPage.hashCode();
+		return mPage.hashCode();
 	}
 
 	public boolean equals(Object obj){
@@ -75,10 +75,10 @@ public class Vertex{
 			return false;
 
 		Vertex v = (Vertex) obj;
-		return this.mPage.equals(v.mPage);
+		return mPage.equals(v.mPage);
 	}
 
 	public ArrayList<Edge> getNeighbors(){
-        return new ArrayList<Edge>(this.mNeighbors);
+        return new ArrayList<Edge>(mNeighbors);
     }
 }

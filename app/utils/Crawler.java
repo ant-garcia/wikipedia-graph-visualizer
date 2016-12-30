@@ -12,9 +12,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Crawler{
-	private static final int MAX_PAGES_TO_SEARCH = 70;
-	private static final int MAX_NODES = 18000;
+	private static final int MAX_NODES = 15000;
 
+	private long mCrawlTime;
 	private AtomicInteger mPos;
 	private AtomicBoolean isCapped;
 	private CountDownLatch mLatch;
@@ -24,65 +24,83 @@ public class Crawler{
 	private ConcurrentLinkedQueue<String> mPagesVisited;
 
 	public Crawler(){
-		this.mPos = new AtomicInteger();
-		this.isCapped = new AtomicBoolean();
-		this.mLatch = new CountDownLatch(1);
-		this.mExecutor = Executors.newFixedThreadPool(5);
-		this.mPagesVisited = new ConcurrentLinkedQueue<String>();
-		this.mPages = new ConcurrentLinkedQueue<Page>();
-		this.mUrls = new ConcurrentLinkedQueue<String>();
+		mCrawlTime = 0;
+		mPos = new AtomicInteger();
+		isCapped = new AtomicBoolean();
+		mLatch = new CountDownLatch(1);
+		mPages = new ConcurrentLinkedQueue<Page>();
+		mUrls = new ConcurrentLinkedQueue<String>();
+		mExecutor = Executors.newFixedThreadPool(5);
+		mPagesVisited = new ConcurrentLinkedQueue<String>();
+	}
+
+	public int getMAX_THRESHOLD(){
+		return MAX_NODES;
+	}
+
+	public long getCrawlTime(){
+		return mCrawlTime;
 	}
 
 	public int updatePos(){
-		return this.mPos.getAndIncrement();	
+		return mPos.getAndIncrement();	
 	}
 
 	public int getPos(){
-		return this.mPos.get();	
+		return mPos.get();	
 	}
 
 	public void setCap(boolean b){
-		this.isCapped.set(b);
+		isCapped.set(b);
 	}
 
 	public boolean getCap(){
-		return this.isCapped.get();
+		return isCapped.get();
 	}
 
 	public CountDownLatch getLatch(){
-		return this.mLatch;
+		return mLatch;
 	}
 
 	public ConcurrentLinkedQueue<Page> getPages(){
-		return this.mPages;
+		return mPages;
+	}
+
+	public Page[] toPageArray(){
+		return mPages.toArray(new Page[0]);
 	}
 
 	public ConcurrentLinkedQueue<String> getUrls(){
-		return this.mUrls;
+		return mUrls;
 	}
 
+	public int getPagesVisited(){
+		return mPagesVisited.size();
+	}
 
 	private String nextUrl(){
 		String nextUrl;
 
 		do{
-			nextUrl = this.mUrls.poll();
-		}while(this.mPagesVisited.contains(nextUrl));
+			nextUrl = mUrls.poll();
+		}while(mPagesVisited.contains(nextUrl));
 
-		if(nextUrl == null)
+		if(nextUrl == null) //prevents nullpointerexception if queue is empty
 			return null;
 
-		this.mPagesVisited.add(nextUrl);
+		mPagesVisited.add(nextUrl);
 
 		return nextUrl;
 	}
 
 	public void search(String url){
+		long startTime = System.nanoTime();
 		mExecutor.execute(new CrawlerLeg(url, this));
-		this.mPagesVisited.add(url);
+		mPagesVisited.add(url);
+
 		try{
-			this.mLatch.await(); //wait for first iteration to finish
-			while(!this.isCapped.get()){
+			mLatch.await(); //wait for first iteration to finish
+			while(!isCapped.get()){
 				String nextUrl = nextUrl();
 				if(nextUrl != null)
 					mExecutor.execute(new CrawlerLeg(nextUrl, this));
@@ -90,12 +108,17 @@ public class Crawler{
 			try{
 				mExecutor.shutdown();
 	    		mExecutor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-	    		System.out.println(String.format("**Done** Visited %s web page(s)", this.mPagesVisited.size()));
 			}catch(InterruptedException ie){
 				ie.printStackTrace();
 			}
 		}catch(InterruptedException e){
 			e.printStackTrace();
 		}
+
+		mCrawlTime = (System.nanoTime() - startTime) / 1000000;
+	}
+
+	public String getBenchmark(){
+		return String.format("Visited %s web page(s) in %s ms", mPagesVisited.size(), mCrawlTime);
 	}
 }

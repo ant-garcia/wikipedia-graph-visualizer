@@ -4,11 +4,11 @@
 
 GET     /                           controllers.Application.index()
 
-GET     /graph                      controllers.Application.graph()
-
-GET     /initCrawl                  controllers.CrawlerController.initCrawl()
+GET     /initSeed                   controllers.CrawlerController.initSeed()
 
 GET     /api                        controllers.CrawlerController.api()
+
+GET     /benchmark                  controllers.CrawlerController.benchmark()
 
 GET     /javascripts/*file          controllers.Assets.at(path = "/public/javascripts", file)
 

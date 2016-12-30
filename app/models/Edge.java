@@ -5,15 +5,15 @@ public class Edge implements Comparable<Edge>{
 	private Vertex mFrom, mTo;
 
 	public Edge(Vertex v1, Vertex v2){
-		this.mFrom = v1;
-		this.mTo = v2;
-		this.mWeight = 1;
+		mFrom = v1;
+		mTo = v2;
+		mWeight = 1;
 	}
 
 	public Edge(Vertex v1, Vertex v2, int w){
-		this.mFrom = (v1.getLabel().compareTo(v2.getLabel()) <= 0) ? v1 : v2;
-        this.mTo = (this.mFrom == v1) ? v2 : v1;
-        this.mWeight = w;
+		mFrom = (v1.getLabel().compareTo(v2.getLabel()) <= 0) ? v1 : v2;
+        mTo = (mFrom == v1) ? v2 : v1;
+        mWeight = w;
 	}
 
 	public Vertex getNeighbor(Vertex current){
@@ -24,23 +24,23 @@ public class Edge implements Comparable<Edge>{
 	}
 
 	public Vertex getFrom(){
-		return this.mFrom;
+		return mFrom;
 	}
 
 	public Vertex getTo(){
-		return this.mTo;
+		return mTo;
 	}
 
 	public int getWeight(){
-		return this.mWeight;
+		return mWeight;
 	}
 
 	public void setWeight(int weight){
-		this.mWeight = weight;
+		mWeight = weight;
 	}
 
 	public int compareTo(Edge e){
-		return this.mWeight - e.mWeight;
+		return mWeight - e.mWeight;
 	}
 
 	public String toString(){
@@ -56,6 +56,6 @@ public class Edge implements Comparable<Edge>{
             return false;
 
         Edge e = (Edge)obj;
-        return e.mFrom.equals(this.mFrom) && e.mTo.equals(this.mTo);
+        return e.mFrom.equals(mFrom) && e.mTo.equals(mTo);
     }  
 }

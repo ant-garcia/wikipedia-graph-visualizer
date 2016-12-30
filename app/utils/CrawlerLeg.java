@@ -19,35 +19,35 @@ public class CrawlerLeg implements Runnable{
 	private Document mHTMLDocument;
 
 	public CrawlerLeg(String url, Crawler crawler){
-		this.mUrl = url;
-		this.mCrawler = crawler;
+		mUrl = url;
+		mCrawler = crawler;
 	}
 
 	public void run(){
-		if(this.mCrawler.getCap())
+		if(mCrawler.getCap()) //exit only if cap is hit
 			return;
 		
 		crawl();
-		this.mCrawler.getLatch().countDown();
+		mCrawler.getLatch().countDown();
 	}
 
 	private void crawl(){
 		try{
-			Connection conn = Jsoup.connect(this.mUrl);
+			Connection conn = Jsoup.connect(mUrl);
 			Document doc = conn.get();
-			this.mHTMLDocument = doc;
+			mHTMLDocument = doc;
 			Elements linksOnPage = mHTMLDocument.select("a[href^=/wiki/]");
 
 			for(Element link : linksOnPage){
 				String absUrl = link.absUrl("href");
-				if(shouldVisit(absUrl) && !this.mUrl.equals(absUrl)){
-					Page p = new Page(this.mUrl, absUrl);
-					if(!this.mCrawler.getPages().contains(p)){
+				if(shouldVisit(absUrl) && !mUrl.equals(absUrl)){
+					Page p = new Page(mUrl, absUrl);
+					if(!mCrawler.getPages().contains(p)){
 						p.setId(mCrawler.updatePos());
-						this.mCrawler.getPages().add(p);
-						this.mCrawler.getUrls().add(absUrl);
-						if(this.mCrawler.getPos() >= 15000){
-							this.mCrawler.setCap(true);
+						mCrawler.getPages().add(p);
+						mCrawler.getUrls().add(absUrl);
+						if(mCrawler.getPos() >= mCrawler.getMAX_THRESHOLD()){
+							mCrawler.setCap(true);
 							return;
 						}
 					}
