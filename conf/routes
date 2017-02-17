@@ -4,6 +4,8 @@
 
 GET     /                           controllers.Application.index()
 
+GET     /graph                      controllers.Application.graph()
+
 GET     /initSeed                   controllers.CrawlerController.initSeed()
 
 GET     /api                        controllers.CrawlerController.api()
