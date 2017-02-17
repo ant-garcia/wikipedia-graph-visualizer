@@ -30,7 +30,7 @@ public class CrawlerController extends Controller{
 		mBenchmark = String.format("Initial seed: %s<br>%s<br>%s<br>", mSeed, crawler.getBenchmark(), graph.getBenchmark());
 		mJsonApi = parser.createJsonFile(graph);
 
-		return redirect(routes.Application.index());
+		return redirect(routes.Application.graph());
 	}
 
 	public Result benchmark(){
