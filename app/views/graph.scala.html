@@ -1,0 +1,25 @@
+@main("Graph"){
+	<script type='Text/javascript' src='@routes.Assets.at("sigma.min.js")'></script>
+	<script type='Text/javascript' src='@routes.Assets.at("sigma.layout.forceAtlas2.min.js")'></script>
+	<div class='modal fade' id='benchmarkModal' role='dialog' data-keyboard='false' data-backdrop='static'>
+		<div class='vertical-alignment-helper'>
+        	<div class='modal-dialog vertical-align-center'>
+		  		<div class='modal-dialog '>
+		  			<div class='modal-content'>
+						<div class='modal-header'>
+							<h1 class='modal-title'>Benchmark</h1>
+						</div>
+						<div class='modal-body'>
+							<p></p> 
+						</div>
+						<div class='modal-footer'>
+							<button id='showGraph' type='submit' class='btn btn-primary' data-dismiss='modal'>Display Graph</button>
+						</div>
+					</div>
+		  		</div>
+	  		</div>
+  		</div>
+	</div>
+	<div id='container'> </div>
+	<script type='Text/javascript' src='@routes.Assets.at("app.js")'></script>
+}
